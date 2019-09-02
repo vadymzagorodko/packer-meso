@@ -1,0 +1,61 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/VM_IP.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "string"
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_v3"
+    },
+    "adminUserName": {
+      "type": "string"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "networkInterfaceId": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('vmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "westus",
+      "apiVersion": "2018-04-01",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "storageProfile": {
+          "osDisk": {
+            "osType": "Windows",
+            "name": "packer-osDisk.2172a497-9d4a-4258-a44d-ef721c455a3d.vhd",
+            "createOption": "FromImage",
+            "image": {
+              "uri": "https://wusstacpacker.blob.core.windows.net/system/Microsoft.Compute/Images/packer/packer-osDisk.2172a497-9d4a-4258-a44d-ef721c455a3d.vhd"
+            },
+            "vhd": {
+              "uri": "https://wusstacpacker.blob.core.windows.net/vmcontainer5b7b43c4-ed50-4618-b411-735f2a8821a3/osDisk.5b7b43c4-ed50-4618-b411-735f2a8821a3.vhd"
+            },
+            "caching": "ReadWrite"
+          }
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "networkProfile": {"networkInterfaces":[{"id":"[parameters('networkInterfaceId')]"}]},
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": false
+          }
+        },
+        "provisioningState": 0
+      }
+    }
+  ]
+}

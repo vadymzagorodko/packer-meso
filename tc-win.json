@@ -1,0 +1,123 @@
+{
+  "builders": [{
+    "type": "azure-arm",
+
+    "client_id": "64ffffd5-badc-439c-92ba-553aa65085d6",
+    "client_secret": "+0a65AT:GovB+Z7VcfHRUiVovKrJ+U7@",
+    "resource_group_name": "wuspacker",
+    "storage_account": "wusstacpacker",
+    "subscription_id": "12d0df75-db0a-4595-8c1c-e17f21d2192c",
+	"tenant_id": "b41b72d0-4e9f-4c26-8a69-f949f367c91d",
+
+
+    "capture_container_name": "packer",
+    "capture_name_prefix": "packer",
+
+
+    "os_type": "Windows",
+    "os_disk_size_gb": "60",
+    "image_publisher": "MicrosoftWindowsServer",
+    "image_offer": "WindowsServerSemiAnnual",
+    "image_sku": "Datacenter-Core-1709-with-Containers-smalldisk",
+
+    "communicator": "winrm",
+    "winrm_use_ssl": "true",
+    "winrm_insecure": "true",
+    "winrm_username": "packer",
+    "winrm_timeout": "20m",
+
+    "location": "West US",
+    "vm_size": "Standard_D2_v3"
+  }],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\helpers.psm1",
+      "destination": "C:\\Users\\Administrator\\helpers.psm1"
+    },
+
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\expand_partition.ps1",
+      "destination": "C:\\Users\\Administrator\\expand_partition.ps1"
+    },
+    {
+      "type": "powershell",
+      "inline": [ "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\expand_partition.ps1\"" ]
+    },
+
+
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\upgrade_docker.ps1",
+      "destination": "C:\\Users\\Administrator\\upgrade_docker.ps1"
+    },
+    {
+      "type": "powershell",
+      "inline": [ "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\upgrade_docker.ps1\"" ]
+    },
+
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\install_bsdtar.ps1",
+      "destination": "C:\\Users\\Administrator\\install_bsdtar.ps1"
+    },
+    {
+      "type": "powershell",
+      "inline": [ "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\install_bsdtar.ps1\"" ]
+    },
+
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\install_teamcity_agent.ps1",
+      "destination": "C:\\Users\\Administrator\\install_teamcity_agent.ps1"
+    },
+    {
+      "type": "powershell",
+      "inline": [ "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\install_teamcity_agent.ps1\"" ]
+    },
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\install_teamcity_agent.config",
+      "destination": "C:\\BuildAgent\\conf\\buildAgent.properties"
+    },
+
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\install_chocolatey.ps1",
+      "destination": "C:\\Users\\Administrator\\install_chocolatey.ps1"
+    },
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\install_packages.ps1",
+      "destination": "C:\\Users\\Administrator\\install_packages.ps1"
+    },
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\chocoPackages.json",
+      "destination": "C:\\Users\\Administrator\\chocoPackages.json"
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\install_chocolatey.ps1\"",
+        "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\install_packages.ps1\" -json \"C:\\Users\\Administrator\\chocoPackages.json\""
+      ]
+    },
+
+    {
+      "type": "powershell",
+      "inline": [ "Powershell -NonInteractive pip3 install virtualenv" ]
+    },
+
+    {
+      "type": "file",
+      "source": "C:\\TEMP\\packer\\teamcity-agent-master\\windows-agent\\generalize_system.ps1",
+      "destination": "C:\\Users\\Administrator\\generalize_system.ps1"
+    },
+    {
+      "type": "powershell",
+      "inline": [ "Powershell -NonInteractive -File \"C:\\Users\\Administrator\\generalize_system.ps1\"" ]
+    }
+  ]
+}
